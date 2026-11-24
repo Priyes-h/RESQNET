@@ -7,6 +7,7 @@ import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import RequestsScreen from '../screens/RequestsScreen';
 
+// createBottomTabNavigator gives us Tab.Navigator and Tab.Screen
 const Tab = createBottomTabNavigator();
 
 const ICONS = {

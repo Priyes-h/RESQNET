@@ -3,6 +3,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/colors';
 import { DEMO_ACTIVITY, DEMO_STATS } from '../data/demoDashboard';
 
+// HomeScreen is the Dashboard tab.
+// navigation is passed in by React Navigation so we can switch tabs.
+
 function StatCard({ icon, label, value, accent }) {
   return (
     <View style={styles.statCard}>
