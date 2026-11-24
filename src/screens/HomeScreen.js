@@ -2,6 +2,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/colors';
 import { DEMO_ACTIVITY, DEMO_STATS } from '../data/demoDashboard';
+import { useRouter } from 'expo-router';
+import { useAppData } from '../state/AppDataContext';
 
 // HomeScreen is the Dashboard tab.
 // navigation is passed in by React Navigation so we can switch tabs.
@@ -18,7 +20,15 @@ function StatCard({ icon, label, value, accent }) {
   );
 }
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen() {
+  const router = useRouter();
+  const { agencies, incidents, requests } = useAppData();
+  const stats = {
+    totalAgencies: DEMO_STATS.totalAgencies,
+    availableAgencies: agencies.filter((agency) => agency.status === 'available').length,
+    activeIncidents: DEMO_STATS.activeIncidents + incidents.length,
+    pendingRequests: requests.filter((request) => request.status === 'Pending').length,
+  };
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.demoBanner}>
@@ -34,25 +44,25 @@ export default function HomeScreen({ navigation }) {
         <StatCard
           icon="people"
           label="Registered agencies"
-          value={DEMO_STATS.totalAgencies}
+          value={stats.totalAgencies}
           accent={colors.primary}
         />
         <StatCard
           icon="checkmark-circle"
           label="Available rescue units"
-          value={DEMO_STATS.availableAgencies}
+          value={stats.availableAgencies}
           accent={colors.success}
         />
         <StatCard
           icon="warning"
           label="Active incidents"
-          value={DEMO_STATS.activeIncidents}
+          value={stats.activeIncidents}
           accent={colors.emergency}
         />
         <StatCard
           icon="hand-left"
           label="Pending requests"
-          value={DEMO_STATS.pendingRequests}
+          value={stats.pendingRequests}
           accent={colors.secondary}
         />
       </View>
@@ -61,14 +71,14 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.actionsRow}>
         <Pressable
           style={styles.actionButton}
-          onPress={() => navigation.navigate('Incidents')}
+          onPress={() => router.navigate('/(tabs)/incidents')}
         >
           <Ionicons name="add-circle" size={20} color={colors.white} />
           <Text style={styles.actionText}>Report incident</Text>
         </Pressable>
         <Pressable
           style={[styles.actionButton, styles.actionButtonSecondary]}
-          onPress={() => navigation.navigate('Map')}
+          onPress={() => router.navigate('/(tabs)/map')}
         >
           <Ionicons name="map" size={20} color={colors.white} />
           <Text style={styles.actionText}>Open live map</Text>

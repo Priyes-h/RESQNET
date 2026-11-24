@@ -4,10 +4,19 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { colors } from '../constants/colors';
 import { DEMO_AGENCIES, DEMO_MAP_REGION } from '../data/demoAgencies';
+import { Choice } from '../components/ui';
 
 export default function MapScreen() {
   // selectedAgency stores the marker the user tapped
   const [selectedAgency, setSelectedAgency] = useState(null);
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const agencyTypes = ['All', ...new Set(DEMO_AGENCIES.map((agency) => agency.type))];
+  const agencyStatuses = ['All', 'available', 'busy', 'offline'];
+  const filteredAgencies = DEMO_AGENCIES.filter((agency) =>
+    (typeFilter === 'All' || agency.type === typeFilter) &&
+    (statusFilter === 'All' || agency.status === statusFilter)
+  );
 
   // showUserDot turns on the map's built-in blue location dot
   const [showUserDot, setShowUserDot] = useState(false);
@@ -40,7 +49,7 @@ export default function MapScreen() {
         setLocationMessage(
           'Permission granted. Tap Show my location. Demo pins stay in Mumbai.'
         );
-      } catch (error) {
+      } catch (_error) {
         setShowUserDot(false);
         setLocationMessage('Location is unavailable. Demo agency pins are still shown.');
       }
@@ -87,7 +96,7 @@ export default function MapScreen() {
       setLocationMessage(
         'Map moved to your device. Demo agency pins may be off-screen in Mumbai.'
       );
-    } catch (error) {
+    } catch (_error) {
       Alert.alert(
         'No GPS on this simulator',
         'The iOS Simulator has no real GPS.\n\n1. Simulator menu: Features > Location\n2. Choose Custom Location\n3. Use latitude 19.076 and longitude 72.8478 to appear near the demo pins\n4. Tap Show my location again.'
@@ -114,7 +123,7 @@ export default function MapScreen() {
       }
 
       await Linking.openURL(callUrl);
-    } catch (error) {
+    } catch (_error) {
       Alert.alert(
         'Call not available here',
         'This is a sample number for the demo: ' + phone + '. It is not a real emergency contact.'
@@ -128,9 +137,15 @@ export default function MapScreen() {
       <View style={styles.banner}>
         <Text style={styles.bannerTitle}>Demonstration map</Text>
         <Text style={styles.bannerText}>{locationMessage}</Text>
+        <Text style={styles.bannerText}>Sample agency pins only · no live tracking</Text>
         <Pressable style={styles.locationButton} onPress={showMyLocation}>
           <Text style={styles.locationButtonText}>Show my location</Text>
         </Pressable>
+      </View>
+
+      <View style={styles.filters}>
+        <Choice label="Agency type" options={agencyTypes} value={typeFilter} onChange={setTypeFilter} />
+        <Choice label="Availability" options={agencyStatuses} value={statusFilter} onChange={setStatusFilter} />
       </View>
 
       {/* The map itself. showsUserLocation draws the native blue dot. */}
@@ -141,7 +156,7 @@ export default function MapScreen() {
         showsUserLocation={showUserDot}
       >
         {/* Loop through demo agencies and draw one pin for each */}
-        {DEMO_AGENCIES.map(function (agency) {
+        {filteredAgencies.map(function (agency) {
           return (
             <Marker
               key={agency.id}
@@ -213,6 +228,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
+  filters: { backgroundColor: colors.white, paddingHorizontal: 12, paddingTop: 10, flexDirection: 'row', gap: 10 },
   bannerTitle: {
     color: colors.primary,
     fontWeight: '700',
