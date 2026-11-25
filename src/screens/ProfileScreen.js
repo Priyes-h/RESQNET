@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
-import { router } from 'expo-router';
 import { colors } from '../constants/colors';
 import { useAppData } from '../state/AppDataContext';
 import { Button, Card, Choice, Field, FormModal, Page, SectionTitle } from '../components/ui';
 
 export default function ProfileScreen() {
-  const { profile, updateProfile, updateResource, setSignedIn } = useAppData();
+  const { profile, updateProfile, updateResource } = useAppData();
   const [visible, setVisible] = useState(false); const [form, setForm] = useState(profile);
   function submit() {
     if (!form.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) || !form.phone.trim()) return Alert.alert('Check your details', 'Enter an agency name, valid email and contact number.');
@@ -18,7 +17,6 @@ export default function ProfileScreen() {
     <SectionTitle>Shared resources</SectionTitle><Text style={{ color: colors.muted, marginBottom: 10 }}>Update quantities and availability for this local demo profile.</Text>
     {profile.resources.map((item, index) => <Card key={item.name} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}><View style={{ flex: 1 }}><Text style={{ color: colors.primary, fontWeight: '700' }}>{item.name}</Text><Text style={{ color: item.available ? colors.success : colors.muted, marginTop: 4 }}>{item.available ? 'Available' : 'Unavailable'}</Text></View><Pressable onPress={() => updateResource(index, { quantity: Math.max(0, item.quantity - 1) })} style={{ padding: 10 }}><Text style={{ color: colors.secondary, fontSize: 20 }}>−</Text></Pressable><Text style={{ color: colors.primary, fontWeight: '700', minWidth: 26, textAlign: 'center' }}>{item.quantity}</Text><Pressable onPress={() => updateResource(index, { quantity: item.quantity + 1 })} style={{ padding: 10 }}><Text style={{ color: colors.secondary, fontSize: 20 }}>＋</Text></Pressable><Pressable onPress={() => updateResource(index, { available: !item.available })} style={{ paddingVertical: 8, paddingHorizontal: 10, backgroundColor: colors.background, borderRadius: 8 }}><Text style={{ color: colors.secondary, fontWeight: '600' }}>Toggle</Text></Pressable></Card>)}
     <Card><Text style={{ color: colors.muted, lineHeight: 20 }}>Demo mode is active. This profile and its resource updates are stored only on this device. No real agency account or dispatch connection is configured.</Text></Card>
-    <Button title="Sign out of demo session" secondary onPress={() => { setSignedIn(false); router.replace('/auth'); }} />
     <FormModal visible={visible} title="Edit agency profile" onClose={() => setVisible(false)}><Field label="Agency name" value={form.name} onChangeText={(value) => set('name', value)} /><Field label="Email" value={form.email} onChangeText={(value) => set('email', value)} keyboardType="email-address" /><Field label="Phone" value={form.phone} onChangeText={(value) => set('phone', value)} keyboardType="phone-pad" /><Field label="Registration information" value={form.registration} onChangeText={(value) => set('registration', value)} /><Field label="Agency type" value={form.type} onChangeText={(value) => set('type', value)} /><Field label="Headquarters location" value={form.headquarters} onChangeText={(value) => set('headquarters', value)} /><Choice label="Operational status" options={['Available', 'Busy', 'Offline']} value={form.status} onChange={(value) => set('status', value)} /><Button title="Save profile" onPress={submit} /></FormModal>
   </Page>;
 }

@@ -7,10 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "RESQNET uses your location to show your device on the demonstration rescue map."
-      }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -20,15 +17,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       }
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "RESQNET uses your location to show your device on the demonstration rescue map."
-        }
-      ]
-    ],
+    "plugins": ["expo-router"],
     "web": {
       "favicon": "./assets/favicon.png"
     }

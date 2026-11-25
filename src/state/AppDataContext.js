@@ -1,10 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { DEMO_AGENCIES } from '../data/demoAgencies';
 
 const STORAGE_KEY = 'resqnet-demo-v1';
 const initialData = {
-  agencies: DEMO_AGENCIES,
   incidents: [],
   requests: [],
   profile: {
@@ -20,7 +18,6 @@ const initialData = {
       { name: 'Other equipment', quantity: 5, available: true },
     ],
   },
-  signedIn: false,
 };
 
 const DataContext = createContext(null);
@@ -47,7 +44,6 @@ export function AppDataProvider({ children }) {
     updateRequest: (id, status) => setData((current) => ({ ...current, requests: current.requests.map((item) => item.id === id ? { ...item, status } : item) })),
     updateProfile: (profile) => setData((current) => ({ ...current, profile: { ...current.profile, ...profile } })),
     updateResource: (index, changes) => setData((current) => ({ ...current, profile: { ...current.profile, resources: current.profile.resources.map((resource, i) => i === index ? { ...resource, ...changes } : resource) } })),
-    setSignedIn: (signedIn) => setData((current) => ({ ...current, signedIn })),
   }), [data, ready]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
